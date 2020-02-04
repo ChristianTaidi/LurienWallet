@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "373486172369",
+    "firebase_url": "https://lurienwallet-1580381603434.firebaseio.com",
+    "project_id": "lurienwallet-1580381603434",
+    "storage_bucket": "lurienwallet-1580381603434.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373486172369:android:88251541201391b4992df0",
+        "android_client_info": {
+          "package_name": "com.christian.lurienwallet.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "373486172369-d4flsa8c6g3ftnuu0e0nl1ilfif8rdot.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.christian.lurienwallet.demo",
+            "certificate_hash": "64b0fe0a811242910760bdd6646b30b2dfb71938"
+          }
+        },
+        {
+          "client_id": "373486172369-a2acff9jgjti84cu6m72jiv8qube8f55.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.christian.lurienwallet.demo",
+            "certificate_hash": "c2086085bb39450132c15ae66a11011f711affc5"
+          }
+        },
+        {
+          "client_id": "373486172369-jpokkkqacje60l2c0c48ochd6s694p0t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_mK85L9We6bRmE5amgw1gR-O22i1aVbc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "373486172369-jpokkkqacje60l2c0c48ochd6s694p0t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

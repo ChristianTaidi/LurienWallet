@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.christian.lurienwallet.demo.ui.home.HomeFragment"
+        android:label="@string/home_walletInfo"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_config"
+        android:name="com.christian.lurienwallet.demo.ui.share.ShareFragment"
+        android:label="@string/menu_config"
+        tools:layout="@layout/fragment_share" />
+
+    <activity
+        android:id="@+id/nav_send"
+        android:name="com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity"
+        android:label="@string/menu_send"
+        tools:layout="@layout/fragment_send" />
+    <activity
+        android:id="@+id/registerActivity"
+        android:name="com.christian.lurienwallet.demo.RegisterActivity"
+        android:label="activity_register"
+        tools:layout="@layout/activity_register" />
+</navigation>
