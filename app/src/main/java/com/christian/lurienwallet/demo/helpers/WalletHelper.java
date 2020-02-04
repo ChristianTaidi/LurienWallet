@@ -12,16 +12,9 @@ import java.io.IOException;
 
 public class WalletHelper {
 
-    String userPwd;
+    private static String userPwd;
 
-    private static WalletHelper instance;
-
-    public WalletHelper(String pwd){
-        this.userPwd = pwd;
-        instance = this;
-    }
-
-    public WalletFile getWallet(File file){
+    public static WalletFile getWallet(File file){
         ObjectMapper walletMapper = new ObjectMapper();
         try {
             return walletMapper.readValue(file,WalletFile.class);
@@ -31,11 +24,11 @@ public class WalletHelper {
 
     }
 
-    public ECKeyPair getKeyPair(WalletFile wallet) throws CipherException {
+    public static ECKeyPair getKeyPair(WalletFile wallet) throws CipherException {
         return Wallet.decrypt(userPwd ,wallet);
     }
 
-    public static WalletHelper getInstance(){
-        return instance;
+    public static void setPwd(String pwd){
+        userPwd = pwd;
     }
 }

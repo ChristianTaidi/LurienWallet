@@ -16,10 +16,16 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.christian.lurienwallet.demo.MainActivity;
 import com.christian.lurienwallet.demo.R;
+import com.christian.lurienwallet.demo.helpers.WalletHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.web3j.crypto.CipherException;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Wallet;
+import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 public class ShareFragment extends Fragment {
@@ -47,13 +53,12 @@ public class ShareFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextView pubkText = (TextView) getView().findViewById(R.id.config_pubk);
-//        try {
-//            //ToDo decode wallet using user password
-//            //pubkText.setText(WalletUtils.loadCredentials("Lurien", MainActivity.getWallet()).getEcKeyPair().getPublicKey().toString());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (CipherException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            //ToDo decode wallet using user password
+            WalletFile walletFile = WalletHelper.getWallet(new File(getActivity().getFilesDir(),"user_wallet"));
+            pubkText.setText(WalletHelper.getKeyPair(walletFile).getPrivateKey().toString());
+        } catch (CipherException e) {
+            e.printStackTrace();
+        }
     }
 }

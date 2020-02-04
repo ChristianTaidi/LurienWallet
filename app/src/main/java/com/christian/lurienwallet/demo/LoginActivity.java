@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.christian.lurienwallet.demo.helpers.WalletHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
 
                             Toast.makeText(LoginActivity.this, "User logged", Toast.LENGTH_SHORT).show();
+                            WalletHelper.setPwd(passwordIn.getText().toString().trim());
                             Intent main = new Intent(getApplicationContext(),MainActivity.class);
                             startActivity(main);
                             finish();
