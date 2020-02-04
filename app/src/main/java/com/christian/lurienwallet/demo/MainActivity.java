@@ -1,6 +1,7 @@
 package com.christian.lurienwallet.demo;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,11 +10,15 @@ import android.os.Bundle;
 import com.christian.lurienwallet.demo.helpers.FeedReaderContract;
 import com.christian.lurienwallet.demo.helpers.FeedReaderDBHelper;
 import com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.provider.BaseColumns;
+import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -48,17 +53,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
-import java.util.ArrayList;
-import java.util.List;
+
+import jnr.ffi.annotations.In;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private String password = "Lurien";
-    private static String walletPath = "main\\res\\wallet";
-    private static File wallet = new File(walletPath);
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private FeedReaderDBHelper dbHelper = new FeedReaderDBHelper(this);
+    private static WalletFile userWallet;
 
 
     @Override
@@ -66,11 +69,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         FirebaseUser user = fAuth.getCurrentUser();
-        if(fAuth.getCurrentUser()==null){
+        File walletFile = new File(getFilesDir(),"user_wallet");
+        //If there is not a wallet created we proceed to the user register and auto-login
+        if(!walletFile.exists()){
+
             Intent register = new Intent(getApplicationContext(),RegisterActivity.class);
             startActivity(register);
             finish();
-        }else {
+
+            //If there is a wallet but no user logged in we proceed to login using fingerprint and user-password
+       }else if(fAuth.getCurrentUser()==null){
+            Intent login = new Intent(getApplicationContext(),LoginActivity.class);
+            startActivity(login);
+            finish();
+
+            //If there is a wallet and a logged user proceed to load the main component
+        }else{
 
 
             setContentView(R.layout.activity_main);
@@ -106,13 +120,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     fAuth.getInstance().signOut();
-                    //ToDo go to login activity
+                    Intent login = new Intent(getApplicationContext(),LoginActivity.class);
+                    startActivity(login);
                     finish();
                 }
             });
 
             setupBouncyCastle();
-            ECKeyPair keyPair = null;
 
         }
 
@@ -132,8 +146,14 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    public static File getWallet(){
-        return wallet;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        return super.onCreateView(name, context, attrs);
+    }
+
+    public static WalletFile getWallet(){
+        return userWallet;
     }
 
     private void setupBouncyCastle() {

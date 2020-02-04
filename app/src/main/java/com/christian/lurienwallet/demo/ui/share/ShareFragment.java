@@ -32,7 +32,7 @@ public class ShareFragment extends Fragment {
                 ViewModelProviders.of(this).get(ShareViewModel.class);
         View root = inflater.inflate(R.layout.fragment_share, container, false);
         final TextView textView = root.findViewById(R.id.text_share);
-        shareViewModel.getText().observe(this, new Observer<String>() {
+        shareViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
@@ -47,12 +47,13 @@ public class ShareFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextView pubkText = (TextView) getView().findViewById(R.id.config_pubk);
-        try {
-            pubkText.setText(WalletUtils.loadCredentials("Lurien", MainActivity.getWallet()).getEcKeyPair().getPublicKey().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CipherException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //ToDo decode wallet using user password
+//            //pubkText.setText(WalletUtils.loadCredentials("Lurien", MainActivity.getWallet()).getEcKeyPair().getPublicKey().toString());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (CipherException e) {
+//            e.printStackTrace();
+//        }
     }
 }

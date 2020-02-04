@@ -13,13 +13,22 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.christian.lurienwallet.demo.R;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.web3j.crypto.WalletFile;
+
+import java.io.File;
+import java.io.IOException;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
+    private static WalletFile userWallet;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        File walletFile = new File(getActivity().getFilesDir(),"user_wallet");
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -30,6 +39,14 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });
+        ObjectMapper walletMapper = new ObjectMapper();
+        try {
+            this.userWallet = walletMapper.readValue(walletFile, WalletFile.class);
+            TextView publickey = root.findViewById(R.id.text_home);
+            publickey.setText(userWallet.getAddress());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return root;
     }
 }
