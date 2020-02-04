@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.christian.lurienwallet.demo.helpers.FeedReaderContract;
 import com.christian.lurienwallet.demo.helpers.FeedReaderDBHelper;
+import com.christian.lurienwallet.demo.helpers.WalletHelper;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,8 +47,7 @@ import jnr.a64asm.Register;
 public class RegisterActivity extends AppCompatActivity {
 
     EditText name,emailIn,passwordIn,phone;
-    Button register;
-    TextView loginBtn;
+    Button register,login;
     FirebaseAuth fAuth;
     private static String walletPath = "main\\res\\wallet";
     private static File wallet = new File(walletPath);
@@ -62,6 +62,8 @@ public class RegisterActivity extends AppCompatActivity {
         emailIn = findViewById(R.id.user_email);
         passwordIn = findViewById(R.id.user_password);
         register = findViewById(R.id.reg_button);
+        login = findViewById(R.id.login_btn);
+
 
         fAuth = FirebaseAuth.getInstance();
         setupBouncyCastle();
@@ -73,6 +75,26 @@ public class RegisterActivity extends AppCompatActivity {
 //            finish();
 //        }
 
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fAuth.signInWithEmailAndPassword(emailIn.getText().toString().trim(),passwordIn.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+
+                            Toast.makeText(RegisterActivity.this, "User logged", Toast.LENGTH_SHORT).show();
+                            WalletHelper.setPwd(passwordIn.getText().toString().trim());
+                            Intent main = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(main);
+                            finish();
+                        }else{
+                            Toast.makeText(RegisterActivity.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
