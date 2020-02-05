@@ -75,6 +75,8 @@ public class RegisterActivity extends AppCompatActivity {
 //            finish();
 //        }
 
+
+        //Login if the user has an account
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +85,13 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
+                            File walletFile = new File(getFilesDir(),"user_wallet");
+                            //If there is not a wallet created we proceed to the user register and auto-login
+                            if(!walletFile.exists()) {
+                                generateKeyPair(passwordIn.getText().toString().trim());
+                                Toast.makeText(RegisterActivity.this, "Wallet created", Toast.LENGTH_SHORT).show();
+
+                            }
                             Toast.makeText(RegisterActivity.this, "User logged", Toast.LENGTH_SHORT).show();
                             WalletHelper.setPwd(passwordIn.getText().toString().trim());
                             Intent main = new Intent(getApplicationContext(),MainActivity.class);
@@ -121,40 +130,13 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             //ToDo create wallet credentials and use symetric encryption for user credentials based on user password
                             ECKeyPair keyPair = null;
-                            try {
 
-                                keyPair = Keys.createEcKeyPair();
-                                WalletFile walletFile = Wallet.createStandard(password, keyPair);
-                                String filename = walletFile.getAddress();
-                                File wallet = new File(getFilesDir(),"user_wallet");
-                                ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
-                                objectMapper.writeValue(wallet,walletFile);
-                                SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                                ContentValues values = new ContentValues();
-                                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_PUBK,walletFile.getAddress());
-                                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_PK,keyPair.getPrivateKey().toString(16));
-                                long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME,null,values);
+                                generateKeyPair(password);
                                 Toast.makeText(RegisterActivity.this, "User created", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
                                 finish();
 
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                            } catch (CipherException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchProviderException e) {
-                                e.printStackTrace();
-                            } catch (InvalidAlgorithmParameterException e) {
-                                e.printStackTrace();
-                            } catch (JsonGenerationException e) {
-                                e.printStackTrace();
-                            } catch (JsonMappingException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
                         }else{
                                 Toast.makeText(RegisterActivity.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -167,21 +149,48 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-        private void setupBouncyCastle() {
-            final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
-            if (provider == null) {
-                // Web3j will set up the provider lazily when it's first used.
-                return;
-            }
-            if (provider.getClass().equals(BouncyCastleProvider.class)) {
-                // BC with same package name, shouldn't happen in real life.
-                return;
-            }
-            // Android registers its own BC provider. As it might be outdated and might not include
-            // all needed ciphers, we substitute it with a known BC bundled in the app.
-            // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
-            // of that it's possible to have another BC implementation loaded in VM.
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-            Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    private void setupBouncyCastle() {
+        final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+        if (provider == null) {
+            // Web3j will set up the provider lazily when it's first used.
+            return;
         }
+        if (provider.getClass().equals(BouncyCastleProvider.class)) {
+            // BC with same package name, shouldn't happen in real life.
+                return;
+        }
+        // Android registers its own BC provider. As it might be outdated and might not include
+        // all needed ciphers, we substitute it with a known BC bundled in the app.
+        // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
+        // of that it's possible to have another BC implementation loaded in VM.
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+
+    private void generateKeyPair(String password){
+        ECKeyPair keyPair = null;
+        try {
+            keyPair = Keys.createEcKeyPair();
+            WalletFile walletFile = Wallet.createStandard(password, keyPair);
+            Toast.makeText(RegisterActivity.this, "Wallet created", Toast.LENGTH_SHORT).show();
+
+            String filename = walletFile.getAddress();
+            File wallet = new File(getFilesDir(),"user_wallet");
+            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+            objectMapper.writeValue(wallet,walletFile);
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CipherException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

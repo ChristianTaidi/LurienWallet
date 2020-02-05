@@ -3,6 +3,7 @@ package com.christian.lurienwallet.demo.ui.qrscanner;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -61,12 +62,13 @@ public class QRScanActivity extends AppCompatActivity {
                     //Verificar version de android
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
 
-                            ActivityCompat.requestPermissions(QRScanActivity.this ,new String[]{Manifest.permission.CAMERA},1);
+                            ActivityCompat.requestPermissions(QRScanActivity.this ,new String[]{Manifest.permission.CAMERA},0);
                     }
                     return;
                 }
                 try{
                     cameraSource.start(cameraView.getHolder());
+
                 }catch (IOException ioe){
                     System.out.println("Error Initializing camera");
                     ioe.printStackTrace();

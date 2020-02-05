@@ -13,6 +13,7 @@ import java.io.IOException;
 public class WalletHelper {
 
     private static String userPwd;
+    private static ECKeyPair keyPair;
 
     public static WalletFile getWallet(File file){
         ObjectMapper walletMapper = new ObjectMapper();
