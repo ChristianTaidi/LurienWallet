@@ -98,6 +98,7 @@ public class QRScanActivity extends AppCompatActivity {
                 if(barcodes.size()>0){
                     codeToken = barcodes.valueAt(0).displayValue.toString();
 
+                    System.out.println(codeToken);
                     if(URLUtil.isValidUrl(codeToken)){
                         Intent browserInten = new Intent(Intent.ACTION_VIEW, Uri.parse(codeToken));
                         startActivity(browserInten);
