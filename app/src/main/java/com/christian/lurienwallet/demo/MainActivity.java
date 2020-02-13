@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -203,12 +204,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Aceptar" , new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     System.out.println("Confirmed");
                 }
+
             });
+
+
 
             builder.setCancelable(false);
             builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -218,6 +222,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             AlertDialog dialog = builder.create();
+            dialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                }
+
+            });
+
             dialog.show();
         }
         System.out.println(claim);
