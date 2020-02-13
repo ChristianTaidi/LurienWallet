@@ -11,15 +11,6 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <Button
-            android:id="@+id/sign_out_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SignOut"
-            android:layout_marginStart="324dp"
-            android:layout_marginTop="28dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

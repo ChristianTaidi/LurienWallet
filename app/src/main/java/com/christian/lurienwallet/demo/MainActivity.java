@@ -13,6 +13,7 @@ import com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.AttributeSet;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -105,23 +106,40 @@ public class MainActivity extends AppCompatActivity {
             // Passing each menu ID as a set of Ids because each
             // menu should be considered as top level destinations.
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_home, R.id.nav_config, R.id.nav_send)
+                    R.id.nav_home, R.id.nav_config, R.id.nav_send,R.id.sign_out)
                     .setDrawerLayout(drawer)
                     .build();
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
             NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
             NavigationUI.setupWithNavController(navigationView, navController);
-            Button signOut = findViewById(R.id.sign_out_btn);
 
-            signOut.setOnClickListener(new View.OnClickListener() {
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
-                public void onClick(View v) {
-                    fAuth.getInstance().signOut();
-                    Intent login = new Intent(getApplicationContext(),LoginActivity.class);
-                    startActivity(login);
-                    finish();
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    menuItem.setChecked(true);
+
+                    switch (menuItem.getItemId()) {
+                        case R.id.nav_home:
+                            // do you click actions for the first selection
+                            break;
+                        case R.id.nav_config:
+                            // do you click actions for the second selection
+                            break;
+                        case R.id.nav_send:
+                            // do you click actions for the third selection
+                            break;
+                        case R.id.sign_out:
+                            fAuth.getInstance().signOut();
+                            Intent login = new Intent(getApplicationContext(),LoginActivity.class);
+                            startActivity(login);
+                            finish();
+
+                    }
+
+                    return true;
                 }
             });
+
 
             setupBouncyCastle();
 
