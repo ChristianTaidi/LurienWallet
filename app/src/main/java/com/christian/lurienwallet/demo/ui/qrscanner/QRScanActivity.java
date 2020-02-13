@@ -3,19 +3,20 @@ package com.christian.lurienwallet.demo.ui.qrscanner;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.webkit.URLUtil;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.christian.lurienwallet.demo.MainActivity;
 import com.christian.lurienwallet.demo.R;
+import com.christian.lurienwallet.demo.ui.claim.ClaimActivity;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -38,6 +39,8 @@ public class QRScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_send);
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
+
+
         initQR();
     }
 
@@ -56,6 +59,7 @@ public class QRScanActivity extends AppCompatActivity {
         cameraView.getHolder().addCallback((new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+
 
                 //Verificar permisos de cámara
                 if(ActivityCompat.checkSelfPermission(QRScanActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -89,23 +93,26 @@ public class QRScanActivity extends AppCompatActivity {
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>(){
 
-            public void release(){}
+            public void release(){
+            }
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
+
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if(barcodes.size()>0){
-                    codeToken = barcodes.valueAt(0).displayValue.toString();
 
+                    codeToken = barcodes.valueAt(0).displayValue.toString();
                     System.out.println(codeToken);
-                    if(URLUtil.isValidUrl(codeToken)){
-                        Intent browserInten = new Intent(Intent.ACTION_VIEW, Uri.parse(codeToken));
-                        startActivity(browserInten);
-                    }
+
+                    Intent data = new Intent();
+                    data.putExtra("codeToken",codeToken);
+                    setResult(420,data);
+                    finish();
+
                 }
             }
         });
-
     }
 }

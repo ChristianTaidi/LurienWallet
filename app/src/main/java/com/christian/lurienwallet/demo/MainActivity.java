@@ -1,24 +1,23 @@
 package com.christian.lurienwallet.demo;
 
-import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import com.christian.lurienwallet.demo.helpers.FeedReaderContract;
+import com.christian.lurienwallet.demo.async.ClaimRequestAsync;
 import com.christian.lurienwallet.demo.helpers.FeedReaderDBHelper;
+import com.christian.lurienwallet.demo.helpers.WalletHelper;
+import com.christian.lurienwallet.demo.ui.dialog.LoadingDialog;
 import com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.provider.BaseColumns;
 import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -35,26 +34,15 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.w3c.dom.Text;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
-import org.web3j.crypto.WalletUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
-
-import jnr.ffi.annotations.In;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,10 +51,17 @@ public class MainActivity extends AppCompatActivity {
     private FeedReaderDBHelper dbHelper = new FeedReaderDBHelper(this);
     private static WalletFile userWallet;
 
+    private LoadingDialog loading;
+    private String codeToken;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loading= new LoadingDialog(this);
+
+
+        WalletHelper.init();
 
         FirebaseUser user = fAuth.getCurrentUser();
         File walletFile = new File(getFilesDir(),"user_wallet");
@@ -98,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //ToDo Scan QR code
                     Intent scanIntent = new Intent(getApplicationContext(), QRScanActivity.class);
-                    startActivity(scanIntent);
+                    startActivityForResult(scanIntent,420);
+
                 }
             });
 
@@ -178,5 +174,52 @@ public class MainActivity extends AppCompatActivity {
         // of that it's possible to have another BC implementation loaded in VM.
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        this.codeToken = data.getExtras().getString("codeToken");
+        loading.showDialog();
+        ClaimRequestAsync claimRequest = new ClaimRequestAsync();
+        claimRequest.execute(codeToken,this);
+        //ToDo async claim request
+    }
+
+    public void claimRequest(List<String> claim,int statusCode){
+        loading.hideDialog();
+        if(statusCode!=0){
+            Toast.makeText(MainActivity.this, "Se ha producido un error de conexión UwU", Toast.LENGTH_SHORT).show();
+        }else{
+            //ToDo show claim request
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("El servicio requiere los siguientes datos");
+
+            builder.setItems(claim.toArray(new String[0]), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.out.println("Confirmed");
+                }
+            });
+
+            builder.setCancelable(false);
+            builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.out.println("cancelled");
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        System.out.println(claim);
     }
 }
