@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -22,25 +23,42 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.Tracker;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.crypto.CipherException;
+import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.ObjectMapperFactory;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthSendRawTransaction;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.Transaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.exceptions.TransactionException;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.concurrent.CompletableFuture;
 
 import jnr.a64asm.Register;
 
@@ -52,7 +70,8 @@ public class RegisterActivity extends AppCompatActivity {
     private static String walletPath = "main\\res\\wallet";
     private static File wallet = new File(walletPath);
     private FeedReaderDBHelper dbHelper = new FeedReaderDBHelper(this);
-
+    private static final BigInteger GAS_PRICE = BigInteger.valueOf(20000L);
+    private static final BigInteger GAS_LIMIT = BigInteger.valueOf(672290L);
 
 
     @Override
@@ -64,7 +83,8 @@ public class RegisterActivity extends AppCompatActivity {
         register = findViewById(R.id.reg_button);
         login = findViewById(R.id.login_btn);
 
-
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         fAuth = FirebaseAuth.getInstance();
         setupBouncyCastle();
 
@@ -131,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
                             //ToDo create wallet credentials and use symetric encryption for user credentials based on user password
                             ECKeyPair keyPair = null;
 
-                                generateKeyPair(password);
+                                generateKeyPair(task.getResult().getUser().getUid());
                                 Toast.makeText(RegisterActivity.this, "User created", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
@@ -173,12 +193,25 @@ public class RegisterActivity extends AppCompatActivity {
             keyPair = Keys.createEcKeyPair();
             WalletFile walletFile = Wallet.createStandard(password, keyPair);
             Toast.makeText(RegisterActivity.this, "Wallet created", Toast.LENGTH_SHORT).show();
-
-            String filename = walletFile.getAddress();
+            Credentials credentials = Credentials.create(ECKeyPair.create( new BigInteger("9d8901bc448adf11b5e08831723f7005bbcfaac0694da44853dccd4bdbe5e7f9",16)));
+//            RawTransaction rawTransaction  = RawTransaction.createEtherTransaction(BigInteger.valueOf(200),GAS_PRICE,GAS_LIMIT,keyPair.getPublicKey().toString(),BigInteger.valueOf(10));
+//            RawTransaction transaction = RawTransaction.createEtherTransaction(BigInteger.valueOf(200),GAS_PRICE,GAS_LIMIT,keyPair.getPublicKey().toString(),BigInteger.valueOf(10));
+//            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction,credentials);
+//            String hexValue = Numeric.toHexString(signedMessage);
+//            System.out.println(hexValue);
+//            EthSendTransaction ethSendTransaction = WalletHelper.getWeb3().ethSendRawTransaction(hexValue).sendAsync().get();
+//            String filename = walletFile.getAddress();
+//            EthGetBalance ethGetBalance = WalletHelper.getWeb3()
+//                    .ethGetBalance(keyPair.getPublicKey().toString(), DefaultBlockParameterName.LATEST)
+//                    .sendAsync()
+//                    .get();
+//
+//            System.out.println(ethGetBalance.getBalance());
             File wallet = new File(getFilesDir(),"user_wallet");
             ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
             objectMapper.writeValue(wallet,walletFile);
         } catch (InvalidAlgorithmParameterException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -189,6 +222,9 @@ public class RegisterActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CipherException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
 

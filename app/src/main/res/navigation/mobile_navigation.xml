@@ -20,8 +20,8 @@
     <activity
         android:id="@+id/nav_send"
         android:name="com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity"
-        android:label="@string/menu_send"
-        tools:layout="@layout/fragment_send" />
+        android:label="@string/menu_assert"
+        tools:layout="@layout/fragment_assert" />
     <activity
         android:id="@+id/registerActivity"
         android:name="com.christian.lurienwallet.demo.RegisterActivity"

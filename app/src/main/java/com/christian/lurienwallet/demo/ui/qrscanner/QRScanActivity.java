@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -14,9 +12,7 @@ import android.view.SurfaceView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.christian.lurienwallet.demo.MainActivity;
 import com.christian.lurienwallet.demo.R;
-import com.christian.lurienwallet.demo.ui.claim.ClaimActivity;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -37,7 +33,7 @@ public class QRScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_send);
+        setContentView(R.layout.fragment_assert);
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
 
 

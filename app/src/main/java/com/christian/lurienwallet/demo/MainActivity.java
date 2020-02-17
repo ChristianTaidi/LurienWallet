@@ -9,7 +9,9 @@ import com.christian.lurienwallet.demo.async.ClaimRequestAsync;
 import com.christian.lurienwallet.demo.helpers.FeedReaderDBHelper;
 import com.christian.lurienwallet.demo.helpers.WalletHelper;
 import com.christian.lurienwallet.demo.ui.dialog.LoadingDialog;
+import com.christian.lurienwallet.demo.ui.home.HomeFragment;
 import com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity;
+import com.christian.lurienwallet.demo.ui.share.ShareFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.AttributeSet;
@@ -46,7 +48,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
@@ -112,34 +114,7 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
             NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
             NavigationUI.setupWithNavController(navigationView, navController);
-
-            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    menuItem.setChecked(true);
-
-                    switch (menuItem.getItemId()) {
-                        case R.id.nav_home:
-                            // do you click actions for the first selection
-                            break;
-                        case R.id.nav_config:
-                            // do you click actions for the second selection
-                            break;
-                        case R.id.nav_send:
-                            // do you click actions for the third selection
-                            break;
-                        case R.id.sign_out:
-                            fAuth.getInstance().signOut();
-                            Intent login = new Intent(getApplicationContext(),LoginActivity.class);
-                            startActivity(login);
-                            finish();
-
-                    }
-
-                    return true;
-                }
-            });
-
+            navigationView.setNavigationItemSelectedListener(this);
 
             setupBouncyCastle();
 
@@ -251,5 +226,33 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         }
         System.out.println(claim);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        switch(menuItem.getItemId()){
+
+            case R.id.nav_home:
+                System.out.println("Nav Home");
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_container, new HomeFragment()).commit();
+                break;
+            case R.id.nav_config:
+                System.out.println("Nav Config");
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_container, new ShareFragment()).commit();
+
+                break;
+            case R.id.nav_send:
+
+                break;
+            case R.id.sign_out:
+                fAuth.getInstance().signOut();
+                Intent login = new Intent(getApplicationContext(),LoginActivity.class);
+                startActivity(login);
+                finish();
+                break;
+        }
+
+        return true;
     }
 }

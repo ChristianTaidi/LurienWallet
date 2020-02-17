@@ -8,8 +8,8 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_asserts">Assert list</string>
-    <string name="menu_send">Send</string>
-    <string name="menu_home">Wallet info</string>
+    <string name="menu_assert">Añadir Assert</string>
+    <string name="menu_home">Lurien Wallet</string>
     <string name="home_walletInfo">Wallet info</string>
     <string name="home_walletkey">Wallet public key</string>
     <string name="menu_config">Configuración</string>
