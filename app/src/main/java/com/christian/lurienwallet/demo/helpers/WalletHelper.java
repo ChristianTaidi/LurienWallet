@@ -1,6 +1,7 @@
 package com.christian.lurienwallet.demo.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
@@ -37,11 +38,9 @@ public class WalletHelper {
     }
 
     public static ECKeyPair getKeyPair(WalletFile wallet) throws CipherException {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        userPwd = firebaseAuth.getCurrentUser().getUid();
         return Wallet.decrypt(userPwd ,wallet);
-    }
-
-    public static void setPwd(String pwd){
-        userPwd = pwd;
     }
 
     public static void init(){
@@ -53,6 +52,8 @@ public class WalletHelper {
     }
 
     public static Credentials getCredentials(File filesDir) throws IOException, CipherException {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        userPwd = firebaseAuth.getCurrentUser().getUid();
         return WalletUtils.loadCredentials(userPwd,  filesDir);
     }
 

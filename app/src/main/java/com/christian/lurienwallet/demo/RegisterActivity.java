@@ -113,7 +113,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                             }
                             Toast.makeText(RegisterActivity.this, "User logged", Toast.LENGTH_SHORT).show();
-                            WalletHelper.setPwd(passwordIn.getText().toString().trim());
                             Intent main = new Intent(getApplicationContext(),MainActivity.class);
                             startActivity(main);
                             finish();

@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private LoadingDialog loading;
     private String codeToken;
+    ShareFragment shareFragment;
 
 
     @Override
@@ -235,11 +236,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_home:
                 System.out.println("Nav Home");
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_container, new HomeFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new HomeFragment()).commit();
                 break;
             case R.id.nav_config:
+                if (shareFragment== null){
+                    shareFragment = new ShareFragment();
+                }
                 System.out.println("Nav Config");
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_container, new ShareFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, shareFragment).commit();
 
                 break;
             case R.id.nav_send:

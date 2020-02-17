@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             Toast.makeText(LoginActivity.this, "User logged", Toast.LENGTH_SHORT).show();
-                            WalletHelper.setPwd(passwordIn.getText().toString().trim());
                             Intent main = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(main);
                             finish();
