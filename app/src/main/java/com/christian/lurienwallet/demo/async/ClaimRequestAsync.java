@@ -13,6 +13,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class ClaimRequestAsync extends AsyncTask {
         try {
             String codeToken = (String)objects[0];
             this.main = (MainActivity) objects[1];
-            Credentials credentials = Credentials.create(ECKeyPair.create( new BigInteger("eb825863157f00f5e926183ab5512e376d770cdcbda8e3e927cfb55f3204e02c",16)));
+            Credentials credentials = WalletHelper.getCredentials(new File(main.getFilesDir(),"user_wallet"));
             TestLurien remoteContract = TestLurien.load(codeToken, WalletHelper.getWeb3(), credentials, WalletHelper.getGasPrice(), WalletHelper.getGasLimit());
             remoteContract.getClaim().send();
             remoteContract.claimRequestedEventFlowable(DefaultBlockParameterName.EARLIEST,DefaultBlockParameterName.LATEST)
