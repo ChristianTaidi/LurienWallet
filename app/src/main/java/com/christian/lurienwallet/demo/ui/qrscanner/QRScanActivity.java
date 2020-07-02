@@ -96,17 +96,21 @@ public class QRScanActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
 
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-
+                int requestCode = getIntent().getExtras().getInt("requestCode");
                 if(barcodes.size()>0){
-
                     codeToken = barcodes.valueAt(0).displayValue.toString();
-                    System.out.println(codeToken);
+                    if(requestCode==420){
 
-                    Intent data = new Intent();
-                    data.putExtra("codeToken",codeToken);
-                    setResult(420,data);
-                    finish();
+                        System.out.println(codeToken);
 
+                        Intent data = new Intent();
+                        data.putExtra("codeToken",codeToken);
+                        setResult(420,data);
+                        finish();
+                    }
+                    if(requestCode==69){
+                        System.out.println(codeToken.toString());
+                    }
                 }
             }
         });

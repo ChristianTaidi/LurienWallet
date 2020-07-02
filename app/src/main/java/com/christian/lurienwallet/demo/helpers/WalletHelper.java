@@ -44,7 +44,7 @@ public class WalletHelper {
     }
 
     public static void init(){
-        web3 = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/8d0ee970b40647049c0f6d6417e81737"));
+        web3 = Web3j.build(new HttpService("http://192.168.1.107:7545/"));
     }
 
     public static Web3j getWeb3(){

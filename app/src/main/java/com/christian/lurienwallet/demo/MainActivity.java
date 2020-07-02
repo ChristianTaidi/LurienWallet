@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Passing each menu ID as a set of Ids because each
             // menu should be considered as top level destinations.
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_home, R.id.nav_config, R.id.nav_send,R.id.sign_out)
+                    R.id.nav_home, R.id.nav_config, R.id.nav_addAssert,R.id.sign_out)
                     .setDrawerLayout(drawer)
                     .build();
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -175,11 +175,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        this.codeToken = data.getExtras().getString("codeToken");
-        loading.showDialog();
-        ClaimRequestAsync claimRequest = new ClaimRequestAsync();
-        claimRequest.execute(codeToken,this);
-        //ToDo async claim request
+        if(requestCode==420) {
+            if (data != null && data.hasExtra("codeToken")) {
+                this.codeToken = data.getExtras().getString("codeToken");
+                loading.showDialog();
+                ClaimRequestAsync claimRequest = new ClaimRequestAsync();
+                claimRequest.execute(codeToken, this);
+            }
+        }
+
+        if(requestCode==69){
+            //ToDo almacenar assert async con carga hk
+        }
     }
 
     public void claimRequest(List<String> claim,int statusCode){
@@ -230,6 +237,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        intent.putExtra("requestCode", requestCode);
+        super.startActivityForResult(intent, requestCode);
+    }
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         switch(menuItem.getItemId()){
@@ -246,8 +258,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, shareFragment).commit();
 
                 break;
-            case R.id.nav_send:
-
+            case R.id.nav_addAssert:
+                Intent scanIntent = new Intent(getApplicationContext(), QRScanActivity.class);
+                startActivityForResult(scanIntent,69);
                 break;
             case R.id.sign_out:
                 fAuth.getInstance().signOut();

@@ -12,14 +12,14 @@
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Menú">
         <menu>
             <item
                 android:id="@+id/nav_config"
                 android:icon="@drawable/ic_menu_manage"
                 android:title="@string/menu_config" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_addAssert"
                 android:icon="@drawable/ic_playlist_add_black_24dp"
                 android:title="@string/menu_assert" />
 

@@ -18,7 +18,7 @@
         tools:layout="@layout/fragment_share" />
 
     <activity
-        android:id="@+id/nav_send"
+        android:id="@+id/nav_addAssert"
         android:name="com.christian.lurienwallet.demo.ui.qrscanner.QRScanActivity"
         android:label="@string/menu_assert"
         tools:layout="@layout/fragment_assert" />

@@ -28,7 +28,13 @@ public class ClaimRequestAsync extends AsyncTask {
         try {
             String codeToken = (String)objects[0];
             this.main = (MainActivity) objects[1];
+
             Credentials credentials = WalletHelper.getCredentials(new File(main.getFilesDir(),"user_wallet"));
+            BigInteger privateKeyInBT = new BigInteger("d6de777c652c16f5c21b5c3b85af130728346a2ad1ea9f5ac117096b86e5f31d", 16);
+
+            //BigInteger privateKeyInBT = new BigInteger("AAC4EA9967D456C9B77209534799B7B158F78372C6E7603A3871CB4CA192A56C", 16);
+            ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
+            credentials = Credentials.create(aPair);
             TestLurien remoteContract = TestLurien.load(codeToken, WalletHelper.getWeb3(), credentials, WalletHelper.getGasPrice(), WalletHelper.getGasLimit());
             remoteContract.getClaim().send();
             remoteContract.claimRequestedEventFlowable(DefaultBlockParameterName.EARLIEST,DefaultBlockParameterName.LATEST)
@@ -48,6 +54,7 @@ public class ClaimRequestAsync extends AsyncTask {
                     });
 
         }  catch (Exception e) {
+            e.printStackTrace();
             return 1;
         }
         return 0;

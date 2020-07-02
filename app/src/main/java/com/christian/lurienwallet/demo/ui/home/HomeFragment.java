@@ -1,5 +1,6 @@
 package com.christian.lurienwallet.demo.ui.home;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,17 +14,21 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.christian.lurienwallet.demo.R;
+import com.christian.lurienwallet.demo.helpers.WalletHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.web3j.crypto.CipherException;
+import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
-    private static WalletFile userWallet;
+    private static Credentials userCredentials;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,10 +46,16 @@ public class HomeFragment extends Fragment {
         });
         ObjectMapper walletMapper = new ObjectMapper();
         try {
-            this.userWallet = walletMapper.readValue(walletFile, WalletFile.class);
+            this.userCredentials = WalletHelper.getCredentials(walletFile);
             TextView publickey = root.findViewById(R.id.text_home);
-            publickey.setText(userWallet.getAddress());
+            publickey.setText(this.userCredentials.getEcKeyPair().getPublicKey().toString());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                String encoder = Base64.getEncoder().encodeToString(userCredentials.getEcKeyPair().getPublicKey().toByteArray());
+                System.out.println(encoder);
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CipherException e) {
             e.printStackTrace();
         }
         return root;

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Window;
 
 import com.christian.lurienwallet.demo.R;
-import com.squareup.picasso.Picasso;
 
 
 public class LoadingDialog {
